@@ -1,5 +1,5 @@
 #!/usr/bin/env fish
-set -l ARGS (getopt -o m:f:l:to:i: -l model:,file:,language:,output_txt,--output-dir:,input_dir -- $argv)
+set -l ARGS (getopt -o m:l:ti:o: -l model:,language:,output_txt,input_dir:,output_dir: -- $argv)
 
 if test $status -ne 0
     echo "Failed to parse arguments"
@@ -15,20 +15,18 @@ while test (count $argv) -gt 0
         case -m --model
             set model $argv[2]
             set argv $argv[3..-1]
-        case -f --file
-            set file $argv[2]
-            set argv $argv[3..-1]
         case -l --language
             set language $argv[2]
             set argv $argv[3..-1]
         case -t --output_txt
-            set output_txt_flag --output-txt
+            set output_txt_flag -t
             set argv $argv[2..-1]
-        case -o --output-dir
-            set output_dir $argv[2]
-            set argv $argv[3..-1]
-        case -i --input-dir
+
+        case -i --input_dir
             set input_dir $argv[2]
+            set argv $argv[3..-1]
+        case -o --output_dir
+            set output_dir $argv[2]
             set argv $argv[3..-1]
         case --
             set argv $argv[2..-1]
@@ -47,5 +45,5 @@ for in_file in (find $input_dir -type f)
 
     mkdir -p $out_dir
 
-    ./run_whisper.cpp.fish -m $model -l $language $output_txt_flag -f $in_file -o $out_file
+    ./run_whisper.cpp.fish -m $model -l $language $output_txt_flag -i $in_file -o $out_file
 end
