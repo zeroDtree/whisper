@@ -1,8 +1,6 @@
 #!/usr/bin/env fish
 set -l ARGS (getopt -o m:f:l:to:i: -l model:,file:,language:,output_txt,--output-dir:,input_dir -- $argv)
 
-echo $ARGS
-
 if test $status -ne 0
     echo "Failed to parse arguments"
     exit 1
@@ -10,7 +8,7 @@ end
 
 eval set -- argv $ARGS
 
-echo $argv
+set output_txt_flag ""
 
 while test (count $argv) -gt 0
     switch $argv[1]
@@ -41,14 +39,13 @@ while test (count $argv) -gt 0
     end
 end
 
-
-for file in (find $input_dir -type f)
-    echo "Processing: $file"
-    set relative_path (string replace -r '^data/' '' -- $file)
+for in_file in (find $input_dir -type f)
+    echo "Processing: $in_file"
+    set relative_path (string replace -r '^data/' '' -- $in_file)
     set out_dir (dirname $output_dir/$relative_path)
     set out_file (string replace -r '\.[^\.]+$' '' -- outputs/$relative_path)
 
     mkdir -p $out_dir
 
-    ./run_whisper.cpp.fish -m $model -f $file -l $language -o $out_file -t 
+    ./run_whisper.cpp.fish -m $model -l $language $output_txt_flag -f $in_file -o $out_file
 end
