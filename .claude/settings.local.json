@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls ~/.claude/skills/)",
+      "Read(//Users/zengls/.claude/skills/**)",
+      "Read(.claude/skills/**)"
+    ]
+  }
+}

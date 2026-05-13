@@ -1,41 +1,49 @@
-- [1. Quick start](#1-quick-start)
-- [2. Quick start for whisper.cpp](#2-quick-start-for-whispercpp)
-	- [2.1. Download](#21-download)
-	- [2.2. Build](#22-build)
-	- [2.3. Add to path](#23-add-to-path)
-	- [2.4. Download models](#24-download-models)
-	- [2.5. Run](#25-run)
-- [3. Supported models](#3-supported-models)
 
-Assume you use `fish` as your shell.
+Assume you use `bash` as your shell.
 
-## 1. Quick start
+## Quick start
+
+Batch transcribe with [whisper_batch.py](whisper_batch.py). You need `whisper-cli` and Python 3 on your `PATH`.
 
 ```bash
-fish batch_run_whisper.cpp.fish -m {model_name} -l {language} -t -i {input_dir} -o {output_dir}
+python3 whisper_batch.py transcribe \
+  -m {model_name} \
+  -l {language} \
+  -i {input_file_or_dir} \
+  -o {output_file_or_dir} \
+  [-t]
 ```
+
+`-t` / `--output-txt` also writes a plain `.txt` next to the default whisper.cpp outputs.
+
+Models are loaded from `{WHISPER_MODEL_DIR}/{WHISPER_MODEL_PREFIX}-{model}.bin`. Defaults: `WHISPER_MODEL_DIR` is `./models` (relative to the process working directory), `WHISPER_MODEL_PREFIX` is `ggml`. Set `WHISPER_MODEL_DIR` to your whisper.cpp `models` path when weights live there.
 
 For example,
 
 ```bash
-fish batch_run_whisper.cpp.fish -m tiny -l zh -t -i data -o outputs
+WHISPER_MODEL_DIR=/path/to/whisper.cpp/models python3 whisper_batch.py transcribe \
+  -m large-v3-turbo-q5_0 \
+  -l zh \
+  -i data \
+  -o output_transcripts \
+  -t
 ```
 
-## 2. Quick start for whisper.cpp
+Strip audio from videos under a directory with `ffmpeg`:
 
-### 2.1. Download
+```bash
+python3 whisper_batch.py extract-audio -i {video_dir} -o {audio_dir} [-f mp3|aac|wav|flac|opus]
+```
+
+## Quick start for whisper.cpp
+
+### Download
 
 ```bash
 git clone https://github.com/ggml-org/whisper.cpp.git
 ```
 
-or
-
-```bash
-git clone https://github.com/zeroDtree/whisper.cpp.git
-```
-
-### 2.2. Build
+### Build
 
 ```bash
 cd whisper.cpp
@@ -43,14 +51,14 @@ cmake -B build -D WHISPER_FFMPEG=yes
 cmake --build build
 ```
 
-### 2.3. Add to path
+### Add to path
 
-Add the following to your `PATH`
+Add the following to your `PATH`:
 
-- `(pwd)/build/bin`
-- `(pwd)/models`
+- `$(pwd)/build/bin`
+- `$(pwd)/models`
 
-### 2.4. Download models
+### Download models
 
 ```
 download-ggml-model.sh {model_name}
@@ -62,15 +70,15 @@ For example,
 download-ggml-model.sh large-v3-turbo-q5_0
 ```
 
-### 2.5. Run
+### Run
 
 For example,
 
 ```bash
-whisper-cli -m (pwd)/models/ggml-large-v3-turbo-q5_0.bin -f test.aac --language zh
+whisper-cli -m "$(pwd)/models/ggml-large-v3-turbo-q5_0.bin" -f test.aac --language zh
 ```
 
-## 3. Supported models
+## Supported models
 
 
 Supported models that you can get from [here](https://huggingface.co/ggerganov/whisper.cpp) are listed as follows:
@@ -85,7 +93,7 @@ Supported models that you can get from [here](https://huggingface.co/ggerganov/w
 | tiny.en-q8_0        | 42 MiB  | `802d6668e7d411123e672abe4cb6c18f12306abb` |
 | base                | 142 MiB | `465707469ff3a37a2b9b8d8f89f2f99de7299dac` |
 | base-q5_1           | 57 MiB  | `a3733eda680ef76256db5fc5dd9de8629e62c5e7` |
-| base-q8_0           | 78 MiB  | `7bb89bb49ed6955013b166f1b6a6c04584a20fbe` |
+| base-q8_0           | 78 MiB  | `7bb89bb49ed6955013b166f1b6c6c04584a20fbe` |
 | base.en             | 142 MiB | `137c40403d78fd54d454da0f9bd998f78703390c` |
 | base.en-q5_1        | 57 MiB  | `d26d7ce5a1b6e57bea5d0431b9c20ae49423c94a` |
 | base.en-q8_0        | 78 MiB  | `bb1574182e9b924452bf0cd1510ac034d323e948` |

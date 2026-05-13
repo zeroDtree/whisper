@@ -1,5 +1,5 @@
 data/
 outputs/
 video_data/
-
+output_transcripts/
 *.wav

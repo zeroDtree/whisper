@@ -1,1 +1,0 @@
-fish batch_run_whisper.cpp.fish -m tiny -l zh -t -i data -o outputs
